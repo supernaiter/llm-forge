@@ -1,0 +1,1 @@
+{"generations": 40, "batch_size": 8, "max_cheap_calls": 400, "max_smart_calls": 3, "reflect_every": 5, "temperature": 0.8, "parents": 3, "archive_capacity": 40, "ssot": true, "workers": 8, "cheap_workers": 8, "eval_timeout": 120}

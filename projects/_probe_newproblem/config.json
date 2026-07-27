@@ -1,0 +1,2 @@
+{"generations": 1, "batch_size": 1, "max_cheap_calls": 2, "max_smart_calls": 0,
+ "archive_capacity": 5, "parents": 1, "seed": 11, "workers": 1, "temperature": 0.7}

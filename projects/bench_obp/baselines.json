@@ -1,0 +1,39 @@
+{
+  "metric": "score = -(mean number of bins used). Higher is better.",
+  "problem": "online_bin_packing",
+  "source": "LLM4AD (arXiv:2412.17287) task/optimization/online_bin_packing; problem setting from FunSearch (Nature 625, 2024)",
+  "data": {
+    "distribution": "round(clip(weibull(3) * 45, 1, capacity))",
+    "numpy_seed": 2024,
+    "capacity": 100
+  },
+  "scales": {
+    "full": {
+      "n_instances": 5,
+      "n_items": 5000,
+      "l1_lower_bound_mean": 2011.4,
+      "l1_lower_bound_per_instance": [2018, 2019, 2008, 2007, 2005],
+      "baselines": {
+        "best_fit": {"score": -2091.8, "mean_bins": 2091.8, "excess_over_l1_pct": 3.9972},
+        "first_fit": {"score": -2099.4, "mean_bins": 2099.4, "excess_over_l1_pct": 4.3751}
+      }
+    },
+    "mock": {
+      "n_instances": 2,
+      "n_items": 500,
+      "l1_lower_bound_mean": 202.5,
+      "l1_lower_bound_per_instance": [202, 203],
+      "baselines": {
+        "best_fit": {"score": -214.0, "mean_bins": 214.0, "excess_over_l1_pct": 5.6790},
+        "first_fit": {"score": -216.0, "mean_bins": 216.0, "excess_over_l1_pct": 6.6667}
+      }
+    }
+  },
+  "literature_reference_unverified": {
+    "note": "Published numbers on the same Weibull 5k setting, measured with GPT-3.5/GPT-4 class models. Not reproduced locally; for orientation only.",
+    "funsearch_excess_over_l1_pct": 0.68,
+    "best_fit_excess_over_l1_pct": 4.02,
+    "first_fit_excess_over_l1_pct": 4.42,
+    "citation": "Romera-Paredes et al., Mathematical discoveries from program search with large language models, Nature 625 (2024)"
+  }
+}

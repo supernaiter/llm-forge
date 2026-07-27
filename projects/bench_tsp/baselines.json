@@ -1,0 +1,37 @@
+{
+  "metric": "score = -(mean tour length). Higher is better.",
+  "problem": "tsp_construct",
+  "source": "LLM4AD (arXiv:2412.17287) task/optimization/tsp_construct; evaluation procedure from AEL/EoH (arXiv:2311.15249)",
+  "data": {
+    "distribution": "uniform points in the unit square",
+    "numpy_seed": 2024
+  },
+  "scales": {
+    "full": {
+      "n_instances": 16,
+      "problem_size": 50,
+      "baselines": {
+        "nearest_neighbor": {"score": -6.823968618405719, "mean_tour": 6.823968618405719},
+        "farthest_first_blend": {"score": -6.553317407424667, "mean_tour": 6.553317407424667}
+      },
+      "reference_not_reachable_by_construction": {
+        "nn_plus_2opt": {"mean_tour": 5.989776, "note": "greedy NN followed by full 2-opt local search. Computed locally. A constructive heuristic cannot use local search, so this is a target to approach, not to beat."}
+      }
+    },
+    "mock": {
+      "n_instances": 4,
+      "problem_size": 20,
+      "baselines": {
+        "nearest_neighbor": {"score": -4.444361175457127, "mean_tour": 4.444361175457127},
+        "farthest_first_blend": {"score": -4.183527673789152, "mean_tour": 4.183527673789152}
+      },
+      "reference_not_reachable_by_construction": {
+        "nn_plus_2opt": {"mean_tour": 3.909861, "note": "greedy NN followed by full 2-opt local search. Computed locally."}
+      }
+    }
+  },
+  "literature_reference_unverified": {
+    "note": "No published number is recorded here. EoH/AEL report TSP results on their own instance draws, which are not the seed-2024 draw used by this pack, so their absolute tour lengths are not directly comparable. Do not paste a paper number into this field without reproducing the exact instance set.",
+    "citation": "Fei Liu et al., Algorithm Evolution using Large Language Model, arXiv:2311.15249 (2023); Fei Liu et al., Evolution of Heuristics, ICML 2024"
+  }
+}

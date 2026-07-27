@@ -1,0 +1,2 @@
+{"generations": 15, "batch_size": 12, "max_cheap_calls": 200, "max_smart_calls": 0,
+ "temperature": 0.9, "parents": 2, "archive_capacity": 30, "seed": 7, "ssot": true}
