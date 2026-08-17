@@ -13,6 +13,8 @@
 """
 import random
 
+import pytest
+
 from forge.operators import sample_parents
 
 
@@ -73,3 +75,22 @@ def test_score_spread_handles_tiny_archive():
     assert sample_parents([], 3, random.Random(0), score_spread=True) == []
     single = [{"text": "only", "score": 1.0}]
     assert sample_parents(single, 3, random.Random(0), score_spread=True) == single
+
+
+def test_controller_parent_selection_policies_are_applied():
+    archive = _clones_then_stragglers()
+    uniform = sample_parents(
+        archive, 3, random.Random(0), selection_policy="uniform"
+    )
+    assert len(uniform) == 3
+    assert len({id(parent) for parent in uniform}) == 3
+    elite = sample_parents(
+        archive, 3, random.Random(0), selection_policy="elite"
+    )
+    assert elite[0] is archive[0]
+    diverse = sample_parents(
+        archive, 3, random.Random(0), selection_policy="diverse"
+    )
+    assert len({parent["score"] for parent in diverse}) >= 2
+    with pytest.raises(ValueError, match="unsupported parent selection policy"):
+        sample_parents(archive, 3, random.Random(0), selection_policy="unknown")

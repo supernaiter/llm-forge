@@ -1,0 +1,417 @@
+{
+  "protocol_id": "FORGE_RESEARCH_V3",
+  "protocol_version": 3,
+  "primary_thesis": "TRANSFERABLE_COMPUTE_AWARE_CONTROLLER_V1",
+  "development_problems": [
+    "obp_dev_v1",
+    "tsp_dev_v1",
+    "jssp_dev_v1",
+    "capset_dev_v1"
+  ],
+  "holdout": {
+    "problem_count": 10,
+    "distinct_problem_families_min": 8,
+    "families_absent_from_development_min": 5,
+    "external_repository_packs_min": 5,
+    "search_instance_clusters_min_per_problem": 50,
+    "test_instance_clusters_min_per_problem": 100,
+    "hidden_test_instances_min_per_problem": 500,
+    "size_shift_problems_min": 6,
+    "distribution_shift_problems_min": 6
+  },
+  "models": [
+    "SMALL",
+    "MEDIUM",
+    "STRONG"
+  ],
+  "seeds": {
+    "primary": [
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112
+    ],
+    "extension": [
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124
+    ],
+    "extension_allowed_only_if_primary_inconclusive": true,
+    "maximum_total": 24
+  },
+  "budgets": {
+    "same_model_attempts": 512,
+    "max_input_tokens": 4194304,
+    "max_output_tokens": 524288,
+    "max_search_evaluations": 512,
+    "native_a100_gpu_seconds": 3600,
+    "native_max_attempts": 2048
+  },
+  "baselines": {
+    "peer_reviewed_required": [
+      "FunSearch",
+      "EoH",
+      "ReEvo",
+      "MCTS_AHD",
+      "PartEvo",
+      "ShinkaEvolve",
+      "EoH_S"
+    ],
+    "open_frontier_candidates": [
+      "OpenEvolve",
+      "CodeEvolve",
+      "EvoX",
+      "SMCEvolve"
+    ],
+    "baseline_cutoff_utc": "2026-08-01T00:00:00Z",
+    "eligibility_predicate": [
+      "public_before_baseline_cutoff",
+      "source_commit_resolved",
+      "license_allows_evaluation",
+      "native_smoke_tests_pass",
+      "forge_adapter_conformance_pass",
+      "no_material_algorithm_change_required"
+    ]
+  },
+  "tracks": [
+    "SAME_MODEL",
+    "NATIVE_COMPUTE"
+  ],
+  "metrics": {
+    "primary": "hidden_test_normalized_anytime_auc_by_attempt",
+    "compute": "hidden_test_normalized_anytime_auc_by_a100_gpu_seconds",
+    "final": "normalized_hidden_test_final_incumbent",
+    "normalization_clipping": false,
+    "reference_must_be_independent": true,
+    "native_gpu_fractions": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0
+    ],
+    "positive_gate_thresholds": {
+      "same_model_superiority_ready": {
+        "min_model_delta_oracle_mean": 0.025,
+        "min_family_delta_oracle_mean": 0.02,
+        "min_distribution_delta_oracle_mean": 0.02,
+        "overall_delta_oracle_mean": 0.03,
+        "overall_delta_oracle_95ci_low": 0.015,
+        "overall_delta_champion_mean": 0.05,
+        "overall_delta_champion_95ci_low": 0.03,
+        "min_model_delta_oracle_95ci_low": 0.005,
+        "min_family_delta_oracle_95ci_low": 0.0,
+        "severe_regression_cell_rate_max": 0.05,
+        "min_cell_delta_oracle": -0.1,
+        "heldout_problem_win_rate_vs_oracle": 0.75,
+        "cell_win_rate_vs_oracle": 0.65
+      },
+      "final_quality_ready": {
+        "overall_delta_oracle_final_mean": 0.015,
+        "overall_delta_oracle_final_95ci_low": 0.005,
+        "min_model_delta_oracle_final_mean": 0.01,
+        "final_problem_win_rate_vs_oracle": 0.7
+      },
+      "ood_generalization_ready": {
+        "problems_with_distribution_shift_min": 6,
+        "problems_with_size_shift_min": 6,
+        "overall_delta_ood_mean": 0.02,
+        "overall_delta_ood_95ci_low": 0.01,
+        "worst_ood_family_mean_delta": 0.0,
+        "ood_problem_win_rate_vs_oracle": 0.65,
+        "ood_severe_regression_rate_max": 0.1
+      },
+      "compute_efficiency_ready": {
+        "overall_delta_gpu_oracle_mean": 0.03,
+        "overall_delta_gpu_oracle_95ci_low": 0.015,
+        "min_family_delta_gpu_oracle_mean": 0.015,
+        "native_compute_problem_win_rate_vs_oracle": 0.7,
+        "native_compute_severe_regression_rate_max": 0.1
+      },
+      "primary_mechanism_validated": {
+        "delta_fixed_mean": 0.015,
+        "delta_fixed_95ci_low_min_exclusive": 0.0,
+        "delta_transfer_mean": 0.01,
+        "delta_transfer_95ci_low_min_exclusive": 0.0,
+        "delta_cost_mean": 0.01,
+        "delta_cost_95ci_low_min_exclusive": 0.0,
+        "min_unseen_family_delta_fixed_mean": 0.0
+      },
+      "replication_ready": {
+        "primary_seed_count_min": 12,
+        "independent_model_profiles_min": 3,
+        "model_effect_sign_min_exclusive": 0.0,
+        "independent_replay_runs_min": 100,
+        "replay_decision_hash_mismatches_max": 0
+      }
+    },
+    "positive_gate_contract": {
+      "same_model_superiority_ready": {
+        "min_model_delta_oracle_mean": {"operator": "ge", "threshold": 0.025},
+        "min_family_delta_oracle_mean": {"operator": "ge", "threshold": 0.02},
+        "min_distribution_delta_oracle_mean": {"operator": "ge", "threshold": 0.02},
+        "overall_delta_oracle_mean": {"operator": "ge", "threshold": 0.03},
+        "overall_delta_oracle_95ci_low": {"operator": "ge", "threshold": 0.015},
+        "overall_delta_champion_mean": {"operator": "ge", "threshold": 0.05},
+        "overall_delta_champion_95ci_low": {"operator": "ge", "threshold": 0.03},
+        "min_model_delta_oracle_95ci_low": {"operator": "ge", "threshold": 0.005},
+        "min_family_delta_oracle_95ci_low": {"operator": "ge", "threshold": 0.0},
+        "severe_regression_cell_rate": {
+          "operator": "le",
+          "threshold": 0.05,
+          "threshold_key": "severe_regression_cell_rate_max"
+        },
+        "min_cell_delta_oracle": {"operator": "ge", "threshold": -0.1},
+        "heldout_problem_win_rate_vs_oracle": {"operator": "ge", "threshold": 0.75},
+        "cell_win_rate_vs_oracle": {"operator": "ge", "threshold": 0.65}
+      },
+      "final_quality_ready": {
+        "overall_delta_oracle_final_mean": {"operator": "ge", "threshold": 0.015},
+        "overall_delta_oracle_final_95ci_low": {"operator": "ge", "threshold": 0.005},
+        "min_model_delta_oracle_final_mean": {"operator": "ge", "threshold": 0.01},
+        "final_problem_win_rate_vs_oracle": {"operator": "ge", "threshold": 0.7}
+      },
+      "ood_generalization_ready": {
+        "problems_with_distribution_shift": {
+          "operator": "ge",
+          "threshold": 6.0,
+          "threshold_key": "problems_with_distribution_shift_min"
+        },
+        "problems_with_size_shift": {
+          "operator": "ge",
+          "threshold": 6.0,
+          "threshold_key": "problems_with_size_shift_min"
+        },
+        "overall_delta_ood_mean": {"operator": "ge", "threshold": 0.02},
+        "overall_delta_ood_95ci_low": {"operator": "ge", "threshold": 0.01},
+        "worst_ood_family_mean_delta": {"operator": "ge", "threshold": 0.0},
+        "ood_problem_win_rate_vs_oracle": {"operator": "ge", "threshold": 0.65},
+        "ood_severe_regression_rate": {
+          "operator": "le",
+          "threshold": 0.1,
+          "threshold_key": "ood_severe_regression_rate_max"
+        }
+      },
+      "compute_efficiency_ready": {
+        "same_model_pool_for_all_methods": {"operator": "bool", "threshold": true},
+        "same_A100_GPU_second_cap": {"operator": "bool", "threshold": true},
+        "same_evaluator_budget": {"operator": "bool", "threshold": true},
+        "overall_delta_gpu_oracle_mean": {"operator": "ge", "threshold": 0.03},
+        "overall_delta_gpu_oracle_95ci_low": {"operator": "ge", "threshold": 0.015},
+        "min_family_delta_gpu_oracle_mean": {"operator": "ge", "threshold": 0.015},
+        "native_compute_problem_win_rate_vs_oracle": {"operator": "ge", "threshold": 0.7},
+        "native_compute_severe_regression_rate": {
+          "operator": "le",
+          "threshold": 0.1,
+          "threshold_key": "native_compute_severe_regression_rate_max"
+        }
+      },
+      "primary_mechanism_validated": {
+        "delta_fixed_mean": {"operator": "ge", "threshold": 0.015},
+        "delta_fixed_95ci_low": {
+          "operator": "gt",
+          "threshold": 0.0,
+          "threshold_key": "delta_fixed_95ci_low_min_exclusive"
+        },
+        "delta_transfer_mean": {"operator": "ge", "threshold": 0.01},
+        "delta_transfer_95ci_low": {
+          "operator": "gt",
+          "threshold": 0.0,
+          "threshold_key": "delta_transfer_95ci_low_min_exclusive"
+        },
+        "delta_cost_mean": {"operator": "ge", "threshold": 0.01},
+        "delta_cost_95ci_low": {
+          "operator": "gt",
+          "threshold": 0.0,
+          "threshold_key": "delta_cost_95ci_low_min_exclusive"
+        },
+        "min_unseen_family_delta_fixed_mean": {"operator": "ge", "threshold": 0.0}
+      },
+      "replication_ready": {
+        "primary_seed_count": {
+          "operator": "ge",
+          "threshold": 12.0,
+          "threshold_key": "primary_seed_count_min"
+        },
+        "independent_model_profiles": {
+          "operator": "ge",
+          "threshold": 3.0,
+          "threshold_key": "independent_model_profiles_min"
+        },
+        "strongest_model_effect_sign": {
+          "operator": "gt",
+          "threshold": 0.0,
+          "threshold_key": "model_effect_sign_min_exclusive"
+        },
+        "medium_model_effect_sign": {
+          "operator": "gt",
+          "threshold": 0.0,
+          "threshold_key": "model_effect_sign_min_exclusive"
+        },
+        "small_model_effect_sign": {
+          "operator": "gt",
+          "threshold": 0.0,
+          "threshold_key": "model_effect_sign_min_exclusive"
+        },
+        "independent_replay_runs": {
+          "operator": "ge",
+          "threshold": 100.0,
+          "threshold_key": "independent_replay_runs_min"
+        },
+        "replay_decision_hash_mismatches": {
+          "operator": "eq",
+          "threshold": 0.0,
+          "threshold_key": "replay_decision_hash_mismatches_max"
+        }
+      }
+    }
+  },
+  "ablations": [
+    "FIXED_DEV_BEST",
+    "NO_TRANSFER_PRIOR",
+    "COST_UNAWARE_CONTROLLER"
+  ],
+  "statistics": {
+    "bootstrap": "paired_hierarchical",
+    "replicates": 20000,
+    "seed": 2026080901,
+    "hierarchy": [
+      "problem_family",
+      "problem",
+      "seed",
+      "hidden_test_instance_cluster"
+    ],
+    "oracle_reselected_inside_replicate": true,
+    "confidence_interval": "two_sided_percentile_95"
+  },
+  "terminal_states": [
+    "STRONG_POSITIVE",
+    "CLEAN_FALSIFICATION",
+    "INCONCLUSIVE",
+    "BLOCKED_INTEGRITY_FAILURE"
+  ],
+  "requirements": [
+    {
+      "id": "RI-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:700-754",
+      "description": "All source, protocol, baseline, model, task, evaluator, container, prompt, and metric manifests are frozen before holdout.",
+      "verification_type": "TYPE_A",
+      "status": "partial",
+      "implementation_evidence": ["forge/manifest.py", "tools/freeze_manifest.py", "tests/test_manifest_v3.py"]
+    },
+    {
+      "id": "RI-002",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:722-754",
+      "description": "Hidden test data and scores have no search-side access or feedback path.",
+      "verification_type": "TYPE_B",
+      "status": "partial",
+      "implementation_evidence": ["forge/holdout.py", "tests/test_holdout_barrier.py"]
+    },
+    {
+      "id": "ATT-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:376-411",
+      "description": "Every valid or failed generation consumes exactly one same-model attempt and each generation slot is unique.",
+      "verification_type": "TYPE_A",
+      "status": "implemented_opt_in",
+      "implementation_evidence": ["forge/ledger.py", "forge/loop.py", "tests/test_ledger.py", "tests/test_loop.py"]
+    },
+    {
+      "id": "RES-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:370-432",
+      "description": "Generation and evaluator resources are recorded separately; observed tokens, model/sampling identity, wall time, GPU allocation, model-forward time, and evaluator cost are replayable, budget-checked, and explicitly marked unavailable when missing.",
+      "verification_type": "TYPE_D",
+      "status": "implemented_opt_in",
+      "implementation_evidence": ["forge/resources.py", "forge/ledger.py", "forge/llm.py", "forge/loop.py", "forge/replay.py"],
+      "verification_evidence": ["tests/test_resources_v3.py", "tests/test_replay.py"]
+    },
+    {
+      "id": "MET-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:434-518",
+      "description": "Anytime quality is computed from selected incumbents by attempt and, separately, by physical GPU budget.",
+      "verification_type": "TYPE_D",
+      "status": "partial",
+      "implementation_evidence": ["forge/research_metrics.py", "tests/test_research_metrics.py"]
+    },
+    {
+      "id": "STAT-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:645-689",
+      "description": "Paired hierarchical bootstrap preserves problem, seed, and hidden-cluster structure and reselects the oracle inside each replicate.",
+      "verification_type": "TYPE_D",
+      "status": "partial",
+      "implementation_evidence": ["forge/research_metrics.py", "tests/test_research_metrics.py"]
+    },
+    {
+      "id": "MECH-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:587-617",
+      "description": "The transferable controller is compared with fixed, no-transfer, and cost-unaware ablations.",
+      "verification_type": "TYPE_A",
+      "status": "partial",
+      "implementation_evidence": ["forge/controller.py", "tests/test_controller.py"]
+    },
+    {
+      "id": "TERM-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:1290-1447",
+      "description": "Only STRONG_POSITIVE and CLEAN_FALSIFICATION terminate the registered research study.",
+      "verification_type": "TYPE_A",
+      "status": "partial",
+      "implementation_evidence": ["forge/protocol.py", "forge/verdict.py", "tests/test_verdict.py"]
+    },
+    {
+      "id": "RI-003",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:1395-1421",
+      "description": "A repository-side public verifier reads a frozen bundle without mutation and fails closed on missing or inconsistent evidence.",
+      "verification_type": "TYPE_B",
+      "status": "implemented",
+      "implementation_evidence": ["forge/study_verifier.py", "tools/verify_v3_research.py", "tests/test_study_verifier.py"]
+    },
+    {
+      "id": "REG-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:1117-1150",
+      "description": "A frozen run matrix covers the exact primary seed set and, only when authorized, the exact extension seed set with unique registered run identities and distinct materialized event/result artifacts whose hashes and replay identities are independently verified.",
+      "verification_type": "TYPE_A",
+      "status": "partial",
+      "implementation_evidence": ["forge/study_matrix.py", "forge/result_schema.py", "tests/test_study_verifier.py"]
+    },
+    {
+      "id": "GPU-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:501-522",
+      "description": "Native-compute results carry all preregistered GPU-budget fractions, measured GPU/model-forward telemetry bound to the resource ledger, and a recomputable hidden-test normalized AUC_GPU; same-model results explicitly mark the metric not applicable.",
+      "verification_type": "TYPE_D",
+      "status": "implemented_opt_in",
+      "implementation_evidence": ["forge/result_schema.py", "forge/research_metrics.py", "tests/test_result_schema.py"]
+    },
+    {
+      "id": "EXT-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:1395-1447",
+      "description": "Scientific termination requires an externally bound read-only verifier receipt and cannot be produced by repository-only mock evidence.",
+      "verification_type": "TYPE_B",
+      "status": "partial",
+      "implementation_evidence": ["forge/study_verifier.py", "protocol/external_verifier_receipt_v3_template.json", "tests/test_study_verifier.py"]
+    }
+  ]
+}

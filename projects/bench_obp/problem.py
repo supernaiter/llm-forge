@@ -17,11 +17,12 @@ clip[1,capacity]、四捨五入、np.random.seed(2024)、5インスタンス×50
 from __future__ import annotations
 
 import json
+import math
 import os
 from pathlib import Path
 
 from forge.codecheck import CodeRejected, check_candidate
-from forge.sandbox import SandboxError, run_python_candidate
+from forge.sandbox import SandboxError, SandboxTimeout, run_python_candidate
 
 _PACK_DIR = Path(__file__).resolve().parent
 
@@ -35,6 +36,15 @@ MOCK_SCALE = {"n_instances": 2, "n_items": 500}
 
 
 def active_scale() -> dict[str, int]:
+    # ``FORGE_MOCK`` selects the model adapter, while the benchmark scale is
+    # independently selectable.  This lets a deterministic mock model run
+    # against the full LLM4AD data rather than silently turning a benchmark
+    # comparison into a small smoke test.
+    requested = os.environ.get("FORGE_BENCH_SCALE", "").strip().lower()
+    if requested == "full":
+        return dict(FULL_SCALE)
+    if requested == "mock":
+        return dict(MOCK_SCALE)
     return dict(MOCK_SCALE if os.environ.get("FORGE_MOCK") == "1" else FULL_SCALE)
 
 
@@ -155,17 +165,42 @@ class Problem:
     def seed(self):
         return [SEED_BEST_FIT, SEED_FIRST_FIT]
 
-    def score(self, cand: str):
+    def score_with_status(self, cand: str):
         try:
             check_candidate(cand, required_defs=("priority",))
-        except CodeRejected:
-            return float("-inf"), False
+        except CodeRejected as exc:
+            message = str(exc)
+            if message.startswith("parse failed:"):
+                status = "invalid_syntax"
+            elif "missing required def" in message:
+                status = "constraint_violation"
+            else:
+                status = "sandbox_rejected"
+            return float("-inf"), False, status, type(exc).__name__
         try:
             value = run_python_candidate(
-                cand + self.harness, "_forge_evaluate", timeout=self.eval_timeout
+                cand + self.harness, "_forge_evaluate", timeout=self.eval_timeout,
+                policy="v3" if os.environ.get("FORGE_PROTOCOL_V3") == "1" else None,
             )
-        except SandboxError:
-            return float("-inf"), False
-        if not isinstance(value, float) or value != value:
-            return float("-inf"), False
-        return value, True
+        except SandboxTimeout as exc:
+            return float("-inf"), False, "timeout", type(exc).__name__
+        except SandboxError as exc:
+            message = str(exc)
+            status = (
+                "sandbox_rejected"
+                if "static policy rejected" in message or "import denied" in message
+                else "constraint_violation"
+                if any(token in message for token in ("must return", "invalid priority", "non-finite"))
+                else "runtime_error"
+            )
+            return float("-inf"), False, status, type(exc).__name__
+        if (
+            not isinstance(value, float)
+            or not math.isfinite(value)
+        ):
+            return float("-inf"), False, "constraint_violation", "InvalidScore"
+        return value, True, "valid_candidate", None
+
+    def score(self, cand: str):
+        score, alive, _, _ = self.score_with_status(cand)
+        return score, alive

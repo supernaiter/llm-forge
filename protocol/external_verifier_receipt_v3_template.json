@@ -1,0 +1,12 @@
+{
+  "status": "DRAFT",
+  "frozen": false,
+  "receipt_type": "external_read_only_verifier",
+  "authority_id": null,
+  "study_manifest_sha256": null,
+  "terminal_state": null,
+  "verifier_id": null,
+  "verifier_version": null,
+  "read_only": true,
+  "signature": null
+}

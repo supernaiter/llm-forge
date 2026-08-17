@@ -75,3 +75,13 @@ def test_mock_still_wins_over_pool(monkeypatch, record_calls):
     monkeypatch.setenv("FORGE_CHEAP_POOL", _endpoints("a", "b"))
     assert isinstance(llm.make_caller("cheap")("```\nseed\n```", 0.5), str)
     assert record_calls == [], "mock走行が実エンドポイントを叩いた"
+
+
+def test_mock_is_reproducible_for_a_declared_seed(monkeypatch):
+    monkeypatch.setenv("FORGE_MOCK", "1")
+    prompt = "```\nseed candidate\n```"
+    first = llm.make_caller("cheap", seed=41)
+    second = llm.make_caller("cheap", seed=41)
+    first_outputs = [first(prompt, 0.8) for _ in range(5)]
+    second_outputs = [second(prompt, 0.8) for _ in range(5)]
+    assert first_outputs == second_outputs

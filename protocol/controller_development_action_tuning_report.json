@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "report_id": "FORGE_CONTROLLER_ACTION_TUNING_DEV_2026-08-10_V1",
+  "evidence_classification": "development_mock_diagnostic",
+  "mock_only": true,
+  "scientific_evidence": false,
+  "registered_action_space_changed": false,
+  "registration_recommendation": "retain_existing_primary_action_space",
+  "source_command": "python tools/run_controller_development.py --problem stringmax=projects/stringmax --problem probe=projects/_probe_newproblem --actions protocol/controller_development_actions_experimental.json --generations 4 --seed 0 --seed 1 --seed 2",
+  "problems": ["stringmax", "probe"],
+  "seeds": [0, 1, 2],
+  "generations": 4,
+  "action_arm_count": 30,
+  "frozen_policy_replay_count": 24,
+  "actions": [
+    {
+      "action_index": 0,
+      "archive_sampling_policy": "uniform",
+      "generator_model": "SMALL",
+      "mutation_operator": "local",
+      "number_of_offspring": 1,
+      "parent_selection_policy": "elite",
+      "reflection_depth": 0,
+      "best_scores_by_problem_seed": [7.0, 7.0, 8.0, 15.0, 14.0, 17.0],
+      "mean_best_score": 11.3333333333
+    },
+    {
+      "action_index": 1,
+      "archive_sampling_policy": "score_spread",
+      "generator_model": "STRONG",
+      "mutation_operator": "structural",
+      "number_of_offspring": 2,
+      "parent_selection_policy": "diverse",
+      "reflection_depth": 1,
+      "best_scores_by_problem_seed": [8.0, 8.0, 9.0, 16.0, 18.0, 18.0],
+      "mean_best_score": 12.8333333333
+    },
+    {
+      "action_index": 2,
+      "archive_sampling_policy": "random",
+      "generator_model": "MEDIUM",
+      "mutation_operator": "recombine",
+      "number_of_offspring": 2,
+      "parent_selection_policy": "uniform",
+      "reflection_depth": 1,
+      "best_scores_by_problem_seed": [7.0, 7.0, 9.0, 14.0, 15.0, 16.0],
+      "mean_best_score": 11.3333333333
+    },
+    {
+      "action_index": 3,
+      "archive_sampling_policy": "best",
+      "generator_model": "STRONG",
+      "mutation_operator": "global",
+      "number_of_offspring": 3,
+      "parent_selection_policy": "elite",
+      "reflection_depth": 2,
+      "best_scores_by_problem_seed": [10.0, 8.0, 9.0, 19.0, 15.0, 15.0],
+      "mean_best_score": 12.6666666667
+    },
+    {
+      "action_index": 4,
+      "archive_sampling_policy": "diverse",
+      "generator_model": "SMALL",
+      "mutation_operator": "simplify",
+      "number_of_offspring": 1,
+      "parent_selection_policy": "diverse",
+      "reflection_depth": 0,
+      "best_scores_by_problem_seed": [11.0, 8.0, 9.0, 15.0, 16.0, 13.0],
+      "mean_best_score": 12.0
+    }
+  ],
+  "frozen_policy_replays": {
+    "TRANSFERABLE_COMPUTE_AWARE_CONTROLLER_V1": {
+      "best_scores": [11.0, 9.0, 9.0, 14.0, 14.0, 16.0],
+      "mean_best_score": 12.1666666667,
+      "selected_baseline_action_index": 1
+    },
+    "FIXED_DEV_BEST": {
+      "best_scores": [9.0, 9.0, 10.0, 14.0, 16.0, 21.0],
+      "mean_best_score": 13.1666666667,
+      "selected_baseline_action_index": 1
+    },
+    "NO_TRANSFER_PRIOR": {
+      "best_scores": [9.0, 8.0, 9.0, 14.0, 16.0, 17.0],
+      "mean_best_score": 12.1666666667,
+      "selected_baseline_action_index": 0
+    },
+    "COST_UNAWARE_CONTROLLER": {
+      "best_scores": [10.0, 9.0, 10.0, 21.0, 19.0, 15.0],
+      "mean_best_score": 14.0,
+      "selected_baseline_action_index": 1
+    }
+  },
+  "interpretation": "The broader action space is retained as a development diagnostic only. The primary frozen controller selected the existing structural/diverse action, and no action was promoted to a scientific registry from mock evidence alone."
+}

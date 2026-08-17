@@ -1,0 +1,212 @@
+{
+  "contract_id": "FORGE_NATIVE_REPRODUCTION_CONTRACT_V1",
+  "source_audit": "protocol/baseline_source_audit_v3.json",
+  "purpose": "論文手法そのものを再現する場合のモデル・プロンプト・生成・評価条件を固定する。未解決項目は実験結果として扱わない。",
+  "status_vocabulary": [
+    "procedure_recorded_not_executed",
+    "executed_native",
+    "blocked_missing_source_parameter"
+  ],
+  "methods": [
+    {
+      "method_id": "FunSearch",
+      "source_commit": "ffb6acf64497be93932c98d25369352efd3865cf",
+      "entrypoint": "example/methods/funsearch/run_funsearch_obp.py",
+      "model": {
+        "source_value": "xxx",
+        "resolved": false,
+        "note": "公開サンプルはモデル名をplaceholderのままにしている"
+      },
+      "prompt": {
+        "source_paths": ["llm4ad/method/funsearch/config.py", "llm4ad/method/funsearch/programs_database.py"],
+        "profile": "native_funsearch_prompt_from_source",
+        "resolved": true
+      },
+      "generation_budget": {
+        "max_sample_nums": 20,
+        "samples_per_prompt": 4,
+        "num_samplers": 1,
+        "max_generations": null
+      },
+      "evaluator_budget": {
+        "num_evaluators": 1,
+        "max_function_evaluations": 20
+      },
+      "selection_of_values": "公開OBPサンプルの実行引数を優先し、paras.yamlの並列値4とは分けて記録する",
+      "status": "procedure_recorded_not_executed"
+    },
+    {
+      "method_id": "EoH",
+      "source_commit": "ffb6acf64497be93932c98d25369352efd3865cf",
+      "entrypoint": "example/methods/eoh/run_eoh_tsp.py",
+      "model": {
+        "source_value": "xxx",
+        "resolved": false,
+        "note": "公開サンプルはモデル名をplaceholderのままにしている"
+      },
+      "prompt": {
+        "source_paths": ["llm4ad/method/eoh/prompt.py", "llm4ad/method/eoh/eoh.py"],
+        "profile": "native_eoh_prompt_from_source",
+        "resolved": true
+      },
+      "generation_budget": {
+        "max_sample_nums": 20,
+        "max_generations": 5,
+        "pop_size": 2,
+        "num_samplers": 1
+      },
+      "evaluator_budget": {
+        "num_evaluators": 1,
+        "max_function_evaluations": 20
+      },
+      "selection_of_values": "公開TSPサンプルの実行引数",
+      "status": "procedure_recorded_not_executed"
+    },
+    {
+      "method_id": "ReEvo",
+      "source_commit": "ffb6acf64497be93932c98d25369352efd3865cf",
+      "entrypoint": "example/llms/online_bin_packing_fake/fake_reevo.py",
+      "model": {
+        "source_value": "FakeLLM (debug example); native API model is not selected",
+        "resolved": false,
+        "note": "公開されている実行例はFakeLLMで、native論文条件のモデル同定には使えない"
+      },
+      "prompt": {
+        "source_paths": ["llm4ad/method/reevo/prompt.py", "llm4ad/method/reevo/reevo.py"],
+        "profile": "native_reevo_prompt_from_source",
+        "resolved": true
+      },
+      "generation_budget": {
+        "max_sample_nums": 20,
+        "max_generations": 10,
+        "pop_size": 2,
+        "num_samplers": 1
+      },
+      "evaluator_budget": {
+        "num_evaluators": 1,
+        "max_function_evaluations": 20
+      },
+      "selection_of_values": "公開FakeLLMデバッグ例。native APIの代替として結果を主張しない",
+      "status": "blocked_missing_source_parameter"
+    },
+    {
+      "method_id": "MCTS_AHD",
+      "source_commit": "ee9c4f424503c65a5fd2b899e6620ce86079fedb",
+      "entrypoint": "main.py",
+      "model": {
+        "source_value": "gpt-4o-mini",
+        "resolved": true,
+        "source_path": "cfg/llm_client/openai.yaml"
+      },
+      "prompt": {
+        "source_paths": ["cfg/problem/tsp_constructive.yaml", "problem_adapter.py", "problems/tsp_constructive"],
+        "profile": "native_mcts_ahd_yaml_and_problem_prompt",
+        "resolved": true
+      },
+      "decoding": {
+        "temperature": 1.0
+      },
+      "generation_budget": {
+        "max_function_evaluations": 1000,
+        "population_size": 10,
+        "initial_population_size": 4
+      },
+      "evaluator_budget": {
+        "timeout_seconds_per_evaluation": 60
+      },
+      "selection_of_values": "cfg/config.yamlの既定TSP constructive profile",
+      "status": "procedure_recorded_not_executed"
+    },
+    {
+      "method_id": "PartEvo",
+      "source_commit": "ffb6acf64497be93932c98d25369352efd3865cf",
+      "entrypoint": "example/methods/partevo/task_example_obp/run_partevo.py",
+      "model": {
+        "source_value": "xxx",
+        "resolved": false,
+        "note": "公開サンプルはモデル名をplaceholderのままにしている"
+      },
+      "prompt": {
+        "source_paths": ["llm4ad/method/partevo/prompt.py", "llm4ad/method/partevo/partevo.py"],
+        "profile": "native_partevo_prompt_from_source",
+        "resolved": true
+      },
+      "generation_budget": {
+        "max_sample_nums": 500,
+        "pop_size": 16,
+        "operators": ["re", "se", "cn", "lge"],
+        "num_samplers": 4,
+        "partition_method": "kmeans",
+        "partition_number": 4
+      },
+      "evaluator_budget": {
+        "num_evaluators": 4,
+        "max_function_evaluations": 500
+      },
+      "selection_of_values": "公開OBPサンプルの実行引数",
+      "status": "procedure_recorded_not_executed"
+    },
+    {
+      "method_id": "ShinkaEvolve",
+      "source_commit": "b67a07328ab7e21e999d9e20a44f4f0054a4b83c",
+      "entrypoint": "examples/circle_packing/run_evo.py",
+      "model": {
+        "source_value": "profile-dependent",
+        "resolved": false,
+        "profiles": {
+          "small": ["gpt-4.1"],
+          "medium": ["gpt-5-mini", "gemini-3-flash-preview", "gemini-3.1-pro-preview", "gpt-5.4"],
+          "large": ["gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "us.anthropic.claude-sonnet-4-6-v1:0", "o4-mini"]
+        }
+      },
+      "prompt": {
+        "source_paths": ["shinka/prompts/prompts_full.py", "shinka/prompts/prompts_init.py", "shinka/prompts/prompts_diff.py"],
+        "profile": "native_shinka_prompt_family",
+        "resolved": true
+      },
+      "generation_budget": {
+        "profiles": {
+          "small": {"num_generations": 20, "max_patch_attempts": 10},
+          "medium": {"num_generations": 50, "max_patch_attempts": 1, "max_patch_resamples": 3},
+          "large": {"num_generations": 300, "max_patch_attempts": 3, "max_patch_resamples": 3}
+        }
+      },
+      "evaluator_budget": {
+        "profiles": {
+          "small": {"max_evaluation_jobs": 1},
+          "medium": {"max_evaluation_jobs": 4},
+          "large": {"max_evaluation_jobs": 6}
+        }
+      },
+      "selection_of_values": "profileを事前に1つ選び、選択理由をholdout前に固定する必要がある",
+      "status": "blocked_missing_source_parameter"
+    },
+    {
+      "method_id": "EoH_S",
+      "source_commit": "8310b056ab0d4ea83d194f1d9e8c7873c0a3b892",
+      "entrypoint": "examples/training/obp_set/run_eohs.py",
+      "model": {
+        "source_value": "deepseek-v3",
+        "resolved": true,
+        "source_path": "examples/training/obp_set/run_eohs.py"
+      },
+      "prompt": {
+        "source_paths": ["code/llm4ad/method/eohs", "code/llm4ad/task/optimization/online_bin_packing_set"],
+        "profile": "native_eohs_prompt_from_source",
+        "resolved": true
+      },
+      "generation_budget": {
+        "max_sample_nums": 2000,
+        "max_generations": 1000,
+        "pop_size": 10,
+        "num_samplers": 4
+      },
+      "evaluator_budget": {
+        "num_evaluators": 4,
+        "timeout_seconds": 120
+      },
+      "selection_of_values": "公開OBP training exampleの実行引数",
+      "status": "procedure_recorded_not_executed"
+    }
+  ]
+}

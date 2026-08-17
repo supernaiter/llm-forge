@@ -1,0 +1,18 @@
+[
+  {
+    "generator_model": "STRONG",
+    "parent_selection_policy": "diverse",
+    "mutation_operator": "global",
+    "number_of_offspring": 1,
+    "reflection_depth": 1,
+    "archive_sampling_policy": "score_spread"
+  },
+  {
+    "generator_model": "STRONG",
+    "parent_selection_policy": "diverse",
+    "mutation_operator": "structural",
+    "number_of_offspring": 1,
+    "reflection_depth": 1,
+    "archive_sampling_policy": "score_spread"
+  }
+]

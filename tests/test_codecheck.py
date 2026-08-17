@@ -14,7 +14,8 @@ def test_allows_numpy_and_math():
 
 def test_rejects_other_imports():
     for source in ("import os\n", "import subprocess\n", "from pathlib import Path\n",
-                   "from . import sibling\n", "import numpy.linalg, socket\n"):
+                   "from . import sibling\n", "import numpy.linalg\n",
+                   "import numpy.lib.npyio\n", "import numpy.linalg, socket\n"):
         with pytest.raises(CodeRejected):
             check_candidate(source)
 
@@ -22,6 +23,23 @@ def test_rejects_other_imports():
 def test_rejects_builtin_escapes():
     for source in ("x = eval('1')\n", "x = open('f')\n", "x = getattr(object, 'a')\n",
                    "x = ().__class__\n", "x = __import__('os')\n"):
+        with pytest.raises(CodeRejected):
+            check_candidate(source)
+
+
+def test_rejects_numpy_file_io_but_allows_numeric_submodules():
+    check_candidate(
+        "import numpy as np\n"
+        "import math\n"
+        "def f(x):\n"
+        "    return np.linalg.norm(x) + np.random.rand() + math.e\n"
+    )
+    for source in (
+        "import numpy as np\ndef f(x):\n    return np.load(x)\n",
+        "import numpy as np\ndef f(x):\n    return np.lib.format.open_memmap(x)\n",
+        "from numpy import load\ndef f(x):\n    return load(x)\n",
+        "import numpy as np\ndef f(x):\n    return x.tofile('hidden')\n",
+    ):
         with pytest.raises(CodeRejected):
             check_candidate(source)
 

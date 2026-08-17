@@ -1,0 +1,10 @@
+[
+  {
+    "generator_model": "SMALL",
+    "parent_selection_policy": "elite",
+    "mutation_operator": "local",
+    "number_of_offspring": 1,
+    "reflection_depth": 0,
+    "archive_sampling_policy": "uniform"
+  }
+]

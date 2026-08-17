@@ -1,0 +1,102 @@
+{
+  "matrix_id": "FORGE_TRACEABILITY_V3",
+  "source_document": "RESEARCH_V3_TERMINATION_CRITERION.md",
+  "entries": [
+    {
+      "requirement_id": "RI-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:700-754",
+      "implementation_evidence": ["forge/manifest.py", "tools/freeze_manifest.py"],
+      "verification_evidence": ["tests/test_manifest_v3.py", "tests/test_freeze_manifest_tool.py"],
+      "status": "partial",
+      "blockers": ["External model/task/evaluator/container assets are not frozen."]
+    },
+    {
+      "requirement_id": "RI-002",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:722-754",
+      "implementation_evidence": ["forge/holdout.py", "forge/sandbox.py"],
+      "verification_evidence": ["tests/test_holdout_barrier.py", "tests/test_sandbox_v3_policy.py"],
+      "status": "partial",
+      "blockers": ["No externally sealed holdout bundle is present."]
+    },
+    {
+      "requirement_id": "ATT-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:376-411",
+      "implementation_evidence": ["forge/ledger.py", "forge/loop.py"],
+      "verification_evidence": ["tests/test_ledger.py", "tests/test_loop.py", "tests/test_replay.py"],
+      "status": "implemented_opt_in",
+      "blockers": ["Native-compute resource accounting is not yet a frozen study artifact."]
+    },
+    {
+      "requirement_id": "RES-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:370-432",
+      "implementation_evidence": ["forge/resources.py", "forge/ledger.py", "forge/llm.py", "forge/loop.py", "forge/replay.py", "forge/result_schema.py", "forge/study_verifier.py"],
+      "verification_evidence": ["tests/test_resources_v3.py", "tests/test_replay.py"],
+      "status": "implemented_opt_in",
+      "blockers": ["External native GPU telemetry and frozen budget evidence are not present."]
+    },
+    {
+      "requirement_id": "MET-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:434-518",
+      "implementation_evidence": ["forge/research_metrics.py", "forge/result_schema.py", "forge/study_verifier.py"],
+      "verification_evidence": ["tests/test_research_metrics.py", "tests/test_study_verifier.py"],
+      "status": "partial",
+      "blockers": ["Full hidden-test result bundle and GPU-time curves are absent."]
+    },
+    {
+      "requirement_id": "STAT-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:645-689",
+      "implementation_evidence": ["forge/research_metrics.py"],
+      "verification_evidence": ["tests/test_research_metrics.py"],
+      "status": "partial",
+      "blockers": ["No frozen primary/extension result matrix is present."]
+    },
+    {
+      "requirement_id": "MECH-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:587-617",
+      "implementation_evidence": ["forge/controller.py", "forge/loop.py", "forge/operators.py"],
+      "verification_evidence": ["tests/test_controller.py", "tests/test_loop.py", "tests/test_parent_selection.py"],
+      "status": "partial",
+      "blockers": ["Controller ablations have not been run on external holdout problems."]
+    },
+    {
+      "requirement_id": "TERM-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:1290-1447",
+      "implementation_evidence": ["forge/protocol.py", "forge/verdict.py", "forge/study_verifier.py"],
+      "verification_evidence": ["tests/test_protocol_v3.py", "tests/test_verdict.py", "tests/test_study_verifier.py"],
+      "status": "partial",
+      "blockers": ["No external frozen study has produced a terminal verdict."]
+    },
+    {
+      "requirement_id": "RI-003",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:1395-1421",
+      "implementation_evidence": ["forge/study_verifier.py", "tools/verify_v3_research.py"],
+      "verification_evidence": ["tests/test_study_verifier.py"],
+      "status": "implemented",
+      "blockers": ["The external authority/verifier deployment is outside this repository."]
+    },
+    {
+      "requirement_id": "REG-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:1117-1150",
+      "implementation_evidence": ["forge/study_matrix.py", "forge/result_schema.py", "forge/study_verifier.py"],
+      "verification_evidence": ["tests/test_study_verifier.py", "tests/test_result_schema.py"],
+      "status": "partial",
+      "blockers": ["No externally authorized primary/extension run matrix is present; repository-side artifact checks are implemented but not exercised on native study runs."]
+    },
+    {
+      "requirement_id": "GPU-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:501-522",
+      "implementation_evidence": ["forge/result_schema.py", "forge/research_metrics.py", "forge/study_verifier.py"],
+      "verification_evidence": ["tests/test_result_schema.py"],
+      "status": "implemented_opt_in",
+      "blockers": ["No native external GPU-AUC result curves are present."]
+    },
+    {
+      "requirement_id": "EXT-001",
+      "source": "RESEARCH_V3_TERMINATION_CRITERION.md:1395-1447",
+      "implementation_evidence": ["forge/study_verifier.py", "protocol/external_verifier_receipt_v3_template.json"],
+      "verification_evidence": ["tests/test_study_verifier.py"],
+      "status": "partial",
+      "blockers": ["External verifier receipt and authority deployment are absent."]
+    }
+  ]
+}

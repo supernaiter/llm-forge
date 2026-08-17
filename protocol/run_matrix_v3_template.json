@@ -1,0 +1,21 @@
+{
+  "manifest_id": "FORGE_RUN_MATRIX_V3_DRAFT",
+  "schema_version": 1,
+  "status": "DRAFT",
+  "frozen": false,
+  "study_id": null,
+  "study_version": null,
+  "authority_attestation_sha256": null,
+  "primary_verifier_status": null,
+  "primary_seed_ids": [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112],
+  "extension_seed_ids": [],
+  "extension_authorized": false,
+  "primary_seed_count": 0,
+  "extension_seed_count": 0,
+  "runs": [],
+  "artifact_layout": {
+    "events_path": "bundle-relative JSONL path per run",
+    "result_path": "bundle-relative JSON path per run"
+  },
+  "matrix_sha256": null
+}

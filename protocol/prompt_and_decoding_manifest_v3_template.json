@@ -1,0 +1,21 @@
+{
+  "manifest_id": "FORGE_PROMPTS_V3_DRAFT",
+  "status": "DRAFT",
+  "profiles": {
+    "SMALL": {
+      "prompt_sha256": null,
+      "decoding_sha256": null,
+      "model_revision": null
+    },
+    "MEDIUM": {
+      "prompt_sha256": null,
+      "decoding_sha256": null,
+      "model_revision": null
+    },
+    "STRONG": {
+      "prompt_sha256": null,
+      "decoding_sha256": null,
+      "model_revision": null
+    }
+  }
+}

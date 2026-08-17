@@ -1,5 +1,7 @@
 #!/bin/zsh
-# 実LLM API走行の唯一の入口。パック毎に1日1走行を日付ロックファイルで機械強制する。
+# legacy/product の実LLM API走行の入口。V3登録研究は frozen controller policy、
+# run identity、外部 manifest を伴う別の protocol-v3 呼び出しで行う。
+# パック毎に1日1走行を日付ロックファイルで機械強制する。
 # 成果物置き場は FORGE_REAL_RUNS_DIR で上書き可(既定はリポ内runs/、後方互換)。
 # 使い方: zsh tools/run_real.sh <projects/配下の問題名 | 問題パックのパス>
 set -euo pipefail

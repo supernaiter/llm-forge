@@ -70,10 +70,55 @@ def _pct(value: float | None, lower_bound: float | None) -> float | None:
     return 100.0 * ((-value) - lower_bound) / lower_bound
 
 
+def _attach_efficiency_metrics(
+    output: dict[str, Any], result: dict[str, Any] | None
+) -> None:
+    """Attach run-counter metrics even when no candidate survives."""
+    if not result:
+        return
+    used = result.get("cheap_used") or 0
+    failed = result.get("cheap_failed")
+    v3_attempts = result.get("attempt_count")
+    if (
+        isinstance(v3_attempts, int)
+        and not isinstance(v3_attempts, bool)
+        and v3_attempts >= 0
+    ):
+        generation_calls = v3_attempts
+        throughput_calls = generation_calls
+    else:
+        generation_calls = used + failed if failed is not None else used
+        # Legacy runs only charge successful responses to cheap_used.
+        throughput_calls = used
+    wall = result.get("wall_secs") or 0.0
+    output.update({
+        "cheap_used": used,
+        "cheap_failed": failed,
+        "generation_calls": generation_calls,
+        "cheap_failure_rate": (
+            failed / generation_calls
+            if failed is not None and generation_calls else None
+        ),
+        "wall_secs": wall,
+        "alive_per_call": (
+            output.get("alive_candidates", 0) / throughput_calls
+            if throughput_calls else None
+        ),
+        "gain_per_call": (
+            (output["best_score"] - output["baseline_score"]) / throughput_calls
+            if throughput_calls
+            and output.get("best_score") is not None
+            and output.get("baseline_score") is not None else None
+        ),
+        "stopped_by": result.get("stopped_by"),
+    })
+
+
 def run_metrics(
     archive_path: str | Path,
     *,
     result: dict[str, Any] | None = None,
+    archive_label: str | None = None,
     baseline_score: float | None = None,
     lower_bound: float | None = None,
     gen_cap: int | None = None,
@@ -100,7 +145,10 @@ def run_metrics(
         born = born[:candidate_cap]
 
     out: dict[str, Any] = {
-        "archive_path": str(archive_path),
+        # A run-local result should not embed an absolute temporary/workspace
+        # path.  Callers that aggregate external runs retain the real path;
+        # the Forge loop supplies a stable archive_label for portable results.
+        "archive_path": archive_label if archive_label is not None else str(archive_path),
         "seed_count": len(seeds),
         "alive_candidates": len(born),
         "generations_seen": max((r["gen"] for r in born), default=0),
@@ -108,6 +156,7 @@ def run_metrics(
         "lower_bound": lower_bound,
     }
     if not born:
+        _attach_efficiency_metrics(out, result)
         return out
 
     scores = [r["score"] for r in born]
@@ -186,24 +235,7 @@ def run_metrics(
         "islands_used": len({r.get("island", 0) for r in born}),
     })
 
-    # --- 効率(result.json があれば) ---
-    if result:
-        used = result.get("cheap_used") or 0
-        failed = result.get("cheap_failed")
-        wall = result.get("wall_secs") or 0.0
-        out.update({
-            "cheap_used": used,
-            "cheap_failed": failed,
-            "cheap_failure_rate": (
-                failed / (used + failed) if failed is not None and (used + failed) else None
-            ),
-            "wall_secs": wall,
-            "alive_per_call": len(born) / used if used else None,
-            "gain_per_call": (
-                (best - baseline_score) / used if used and baseline_score is not None else None
-            ),
-            "stopped_by": result.get("stopped_by"),
-        })
+    _attach_efficiency_metrics(out, result)
     return out
 
 

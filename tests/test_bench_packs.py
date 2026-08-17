@@ -93,3 +93,17 @@ def test_scoring_is_deterministic(pack):
     first = problem.score(source)
     second = problem.score(source)
     assert first == second
+
+
+@pytest.mark.parametrize("pack", PACKS)
+@pytest.mark.parametrize("bad_score", [float("inf"), float("-inf"), float("nan")])
+def test_nonfinite_evaluator_scores_are_constraint_failures(pack, bad_score, monkeypatch):
+    mod = load_pack(pack)
+    problem = mod.Problem()
+    source = next(iter(mod.BASELINE_PROGRAMS.values()))
+    monkeypatch.setattr(mod, "run_python_candidate", lambda *args, **kwargs: bad_score)
+    score, alive, status, error_class = problem.score_with_status(source)
+    assert not alive
+    assert score == float("-inf")
+    assert status == "constraint_violation"
+    assert error_class == "InvalidScore"

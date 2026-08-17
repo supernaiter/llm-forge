@@ -38,6 +38,103 @@ These are local, reproducible measurements from this repository's own test
 suite (`tests/test_bench_packs.py` recomputes and checks them against
 `baselines.json` on every run) — not a benchmark leaderboard claim.
 
+## Research V3 contract
+
+The proposed machine-auditable research contract is recorded in
+[`RESEARCH_V3_TERMINATION_CRITERION.md`](RESEARCH_V3_TERMINATION_CRITERION.md),
+with a reusable execution prompt in
+[`FORGE_RESEARCH_V3_GOAL_PROMPT.md`](FORGE_RESEARCH_V3_GOAL_PROMPT.md).
+The machine-readable constants, requirement traceability matrix, and frozen
+asset templates (all explicitly marked `DRAFT` until an external authority
+freezes them) live under [`protocol/`](protocol/). V3 instrumentation is
+opt-in so legacy runs remain compatible:
+
+```bash
+FORGE_MOCK=1 python3 cli.py projects/_probe_newproblem \
+  --mock --protocol-v3 --run-dir /tmp/forge-v3-mock
+python3 tools/replay_run.py /tmp/forge-v3-mock/events.jsonl
+```
+
+V3 mode records every generation slot, including failed or rejected attempts,
+in a hash-chained `events.jsonl`. A mock run is an engineering dry run only;
+it is not a holdout result or a paper verdict.
+
+Legacy CLI runs are labeled `FORGE_LEGACY` in `manifest.json` and are never
+research-eligible. A non-mock V3 run additionally requires a frozen,
+development-only controller policy and a complete registered run identity:
+
+```bash
+python3 tools/freeze_controller.py \
+  --traces /path/to/development_traces.jsonl \
+  --actions /path/to/registered_actions.json \
+  --out /path/to/controller_policy.json
+python3 cli.py /path/to/problem_pack --protocol-v3 \
+  --controller-policy /path/to/controller_policy.json \
+  --controller-model-routes /path/to/controller_model_routes.json \
+  --model-manifest /path/to/model_manifest.json \
+  --run-identity /path/to/frozen_run_identity.json \
+  --run-dir /path/to/run
+```
+
+`--controller-model-routes` is a separate, content-hashed binding from each
+frozen controller `generator_model` identity to a Forge adapter tier. Every
+identity in the policy must be present; non-mock V3 CLI runs fail closed when
+the route manifest is absent or incomplete. The route file does not replace
+the externally frozen model/weight/runtime manifest. Supplying
+`--model-manifest` verifies that every route hash matches that validated file;
+the route and model-manifest hashes are recorded in `manifest.json`.
+
+Development traces can be recomputed from a Forge search ledger before the
+policy is frozen. The collector uses only search-side incumbent checkpoints
+and observed generation cost; it never opens a holdout pack:
+
+```bash
+python3 tools/collect_controller_traces.py \
+  --events /path/to/dev-run/events.jsonl \
+  --problem-id obp_dev_v1 \
+  --out /path/to/development_traces.jsonl
+```
+
+For a non-mock V3 run, every `generator_model` identity selected by the frozen
+controller must also be bound to a callable adapter: use the CLI's
+`--controller-model-routes` manifest or the Python API's
+`controller_model_callers` mapping. If that binding is absent or non-callable,
+the loop rejects the run rather than silently using the default cheap caller.
+Public mock runs may use the default caller for plumbing tests only.
+
+Each V3 attempt also carries a normalized `resource_usage` record. Generation
+telemetry (tokens, model/sampling identity, wall time, GPU allocation, and
+model-forward time) is kept separate from evaluator telemetry and budgets.
+When an adapter cannot provide a field, the ledger stores `null` plus an
+explicit `missing` entry; it never imputes a value. `tools/replay_run.py`
+recomputes both the search decision hash and the resource-ledger hash.
+An external terminal bundle must additionally attest to complete budget
+telemetry. The mock fixture records explicit counts from its declared
+`MOCK_WHITESPACE_V1` tokenizer, but it remains an engineering dry run only;
+native runs must provide observed GPU allocation and model-forward telemetry.
+
+The public bundle verifier is deliberately read-only. It checks a frozen
+study bundle's content hashes, sealed task/model/baseline manifests, frozen
+run matrix (including exact primary/extension seed coverage), ledger replay,
+hidden-event denylist, GPU-AUC schema, and explicit terminal evidence; missing
+or unresolved assets fail closed. A repository-only mock bundle cannot
+terminate: a receipt from the external read-only verifier is required, and a
+registered result must contain one incumbent checkpoint per capped attempt.
+The default verifier also requires the checkout containing the frozen source
+commit to be clean:
+
+```bash
+python3 tools/verify_v3_research.py /opt/forge-study-bundle-v3
+```
+
+This repository-side verifier is not the external authority required for the
+registered study. It cannot create the sealed holdout, certify licenses, or
+replace the final unblinding authority. Until those externally frozen assets
+exist, `FORGE_RESEARCH_FINISHED` remains false. The local
+`V3_ENGINEERING_READY` predicate is intentionally separate: it covers the
+public mock/replay/resource audit and may be true while registered research is
+still blocked on external assets.
+
 ## Philosophy: measurement discipline
 
 Search algorithms are easy to fool yourself about. `best_score` (a single
@@ -95,6 +192,32 @@ zsh tools/run_ab.sh bench_obp max_per_score 0 3 3
 
 Both scripts accept `--mock` as a trailing argument to exercise the plumbing
 without calling an LLM.
+
+Controller development matrix (local problems only):
+
+```bash
+python3 tools/run_controller_development.py \
+  --problem stringmax=projects/stringmax \
+  --problem probe=projects/_probe_newproblem \
+  --actions protocol/controller_development_actions.json \
+  --out runs/controller-development \
+  --generations 3 \
+  --seed 0 --seed 1 --seed 2
+```
+
+This runs every registered action on every development problem through the
+actual V3 loop, writes one ledger and trace file per arm, merges the
+development traces, then freezes the primary controller and all registered
+ablations under `policies/`. It then replays each frozen policy on every
+development problem and records the selected-action sequence under
+`policy_runs/`; those replay runs are never fed back into fitting. It never
+reads holdout assets and always uses the mock adapter; the output is
+controller-development evidence, not a scientific result bundle. Each replay
+row also records the event/result file hashes and replay decision hashes.
+The resulting `development_summary.json` includes problem-local,
+seed-separated `development_comparison` cells for action arms and frozen-policy
+replays. These remain mock-development diagnostics, not normalized holdout
+metrics or scientific evidence.
 
 ## Adding a problem
 

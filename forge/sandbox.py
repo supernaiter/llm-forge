@@ -7,6 +7,9 @@ from __future__ import annotations
 
 import importlib
 import multiprocessing as mp
+from builtins import __import__ as _builtin_import
+
+from .codecheck import CodeRejected, check_candidate
 
 
 class SandboxError(RuntimeError):
@@ -17,6 +20,44 @@ class SandboxTimeout(SandboxError):
     """Raised when candidate execution exceeds the sandbox timeout."""
 
 
+V3_ALLOWED_MODULES = frozenset({"numpy", "math"})
+V3_BUILTINS = {
+    "__import__": None,
+    "__name__": "__candidate__",
+    "abs": abs,
+    "all": all,
+    "any": any,
+    "bool": bool,
+    "dict": dict,
+    "enumerate": enumerate,
+    "Exception": Exception,
+    "float": float,
+    "int": int,
+    "isinstance": isinstance,
+    "len": len,
+    "list": list,
+    "map": map,
+    "max": max,
+    "min": min,
+    "range": range,
+    "reversed": reversed,
+    "round": round,
+    "set": set,
+    "sorted": sorted,
+    "sum": sum,
+    "tuple": tuple,
+    "ValueError": ValueError,
+    "zip": zip,
+}
+
+
+def _restricted_import(name, globals=None, locals=None, fromlist=(), level=0):
+    root = str(name).split(".", 1)[0]
+    if level or root not in V3_ALLOWED_MODULES:
+        raise ImportError(f"module import denied by V3 sandbox: {name}")
+    return _builtin_import(name, globals, locals, fromlist, level)
+
+
 def _child_main(
     conn,
     source: str,
@@ -25,9 +66,20 @@ def _child_main(
     kwargs: dict,
     globals_module: str | None,
     globals_factory: str | None,
+    policy: str | None,
 ):
     try:
-        ns = {}
+        if policy == "v3":
+            try:
+                check_candidate(source, allowed_modules=V3_ALLOWED_MODULES,
+                                required_defs=(entrypoint,))
+            except CodeRejected as exc:
+                raise SandboxError(f"V3 static policy rejected candidate: {exc}") from exc
+            restricted_builtins = dict(V3_BUILTINS)
+            restricted_builtins["__import__"] = _restricted_import
+            ns = {"__builtins__": restricted_builtins}
+        else:
+            ns = {}
         if globals_module and globals_factory:
             mod = importlib.import_module(globals_module)
             factory = getattr(mod, globals_factory)
@@ -65,6 +117,7 @@ def run_python_candidate(
     timeout: float = 5.0,
     globals_module: str | None = None,
     globals_factory: str | None = None,
+    policy: str | None = None,
 ):
     """Execute `source` in a spawned child interpreter and return the result.
 
@@ -85,6 +138,7 @@ def run_python_candidate(
             kwargs,
             globals_module,
             globals_factory,
+            policy,
         ),
     )
     proc.start()

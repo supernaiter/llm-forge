@@ -1,0 +1,13 @@
+{
+  "manifest_id": "FORGE_CONTAINERS_V3_DRAFT",
+  "status": "DRAFT",
+  "images": {
+    "forge": {
+      "oci_digest": null,
+      "runtime": null,
+      "platform": null
+    },
+    "baseline": {},
+    "evaluator": {}
+  }
+}

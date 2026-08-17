@@ -1,0 +1,14 @@
+{
+  "manifest_id": "FORGE_TASKS_V3_DRAFT",
+  "status": "DRAFT",
+  "sealed": false,
+  "hidden_content_in_search_bundle": null,
+  "development_problems": [
+    "obp_dev_v1",
+    "tsp_dev_v1",
+    "jssp_dev_v1",
+    "capset_dev_v1"
+  ],
+  "development_metadata": [],
+  "holdout_problems": []
+}

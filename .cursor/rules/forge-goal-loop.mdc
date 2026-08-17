@@ -1,0 +1,18 @@
+---
+description: Execute FORGE_SIMPLE_GOAL_V3; do not grind V2 or relax gates
+alwaysApply: true
+---
+
+# Forge Goal V3
+
+Read `FORGE_SIMPLE_GOAL_V3.md` before changing search behavior.
+If that file's status is `passed`, do not arm another V3 loop.
+
+- Pass only from the judgment command on seeds `0,1,2`.
+- Primary gate: mean `auc_by_generation` >= 8.8333.
+- Also required: `auc_by_candidate` >= 8.6667, `best_score` >= 9.0,
+  V1 relative margin vs `FIXED_DEV_BEST` >= 0.25, 4 attempts, replay 0.
+- Then confirm on seeds `3,4,5` with no further edits.
+- Do not use H1's 10.333 as a target. Do not grind V2's +1.0 margin.
+- Do not edit `FORGE_SIMPLE_GOAL.md` or `RESEARCH_V3_TERMINATION_CRITERION.md`.
+- Do not change seeds, attempt cap, problem, or the mock model to force a pass.

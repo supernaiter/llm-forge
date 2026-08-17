@@ -1,0 +1,10 @@
+{
+  "manifest_id": "FORGE_MODELS_V3_DRAFT",
+  "status": "DRAFT",
+  "tiers": [
+    "SMALL",
+    "MEDIUM",
+    "STRONG"
+  ],
+  "models": {}
+}

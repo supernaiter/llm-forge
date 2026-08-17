@@ -118,6 +118,42 @@ def test_efficiency_metrics_need_result_json(tmp_path):
     assert withres["gain_per_call"] == 1.0
 
 
+def test_v3_efficiency_metrics_use_attempts_as_the_complete_denominator(tmp_path):
+    path = write_archive(tmp_path, [
+        {"text": "seed", "score": -100.0, "gen": 0},
+        {"text": "a", "score": -90.0, "gen": 1},
+    ])
+    metrics = run_metrics(
+        path,
+        result={
+            "attempt_count": 10,
+            "cheap_used": 10,
+            "cheap_failed": 3,
+            "wall_secs": 1.0,
+        },
+    )
+    assert metrics["generation_calls"] == 10
+    assert metrics["cheap_failure_rate"] == 0.3
+    assert metrics["alive_per_call"] == 0.1
+
+
+def test_v3_efficiency_metrics_are_kept_when_no_candidate_survives(tmp_path):
+    path = write_archive(tmp_path, [{"text": "seed", "score": 1.0, "gen": 0}])
+    metrics = run_metrics(
+        path,
+        result={
+            "attempt_count": 6,
+            "cheap_used": 6,
+            "cheap_failed": 6,
+            "wall_secs": 1.0,
+        },
+    )
+    assert metrics["alive_candidates"] == 0
+    assert metrics["generation_calls"] == 6
+    assert metrics["cheap_failure_rate"] == 1.0
+    assert metrics["alive_per_call"] == 0.0
+
+
 def test_summarise_always_reports_detection_power():
     """平均と標準偏差だけ出すと「差が無い」と「測れていない」を混同する。"""
     s = summarise([1.0, 2.0, 3.0])

@@ -1,0 +1,21 @@
+{
+  "manifest_id": "FORGE_EVALUATOR_V3_DRAFT",
+  "status": "DRAFT",
+  "evaluator_source_commit": null,
+  "runtime_digest": null,
+  "search_evaluator": {
+    "entrypoint": null,
+    "deterministic": null,
+    "budget_units": null
+  },
+  "hidden_evaluator": {
+    "entrypoint": null,
+    "deterministic": null,
+    "sealed_until_unblinding": null
+  },
+  "normalization_anchors": {
+    "seed_reference_manifest": null,
+    "fixed_reference_manifest": null,
+    "clipping": false
+  }
+}

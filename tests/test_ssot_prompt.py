@@ -23,6 +23,16 @@ def test_build_prompt_ssot_true_includes_snippet():
     assert SSOT_SNIPPET in p
 
 
+def test_controller_mutation_and_reflection_controls_are_explicit_in_prompt():
+    p = build_prompt(
+        _Problem(), [], "", random.Random(1),
+        mutation_operator="structural", reflection_depth=2,
+    )
+    assert "Registered mutation operator: structural" in p
+    assert "reflection depth 2" in p
+    assert "Change the algorithmic structure" in p
+
+
 def test_extract_block_strips_ssot_reasoning():
     fake_output = (
         "1. seed: a3f9k2m8x0q1z7b4\n"

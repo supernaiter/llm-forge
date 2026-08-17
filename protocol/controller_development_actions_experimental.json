@@ -1,0 +1,42 @@
+[
+  {
+    "archive_sampling_policy": "uniform",
+    "generator_model": "SMALL",
+    "mutation_operator": "local",
+    "number_of_offspring": 1,
+    "parent_selection_policy": "elite",
+    "reflection_depth": 0
+  },
+  {
+    "archive_sampling_policy": "score_spread",
+    "generator_model": "STRONG",
+    "mutation_operator": "structural",
+    "number_of_offspring": 2,
+    "parent_selection_policy": "diverse",
+    "reflection_depth": 1
+  },
+  {
+    "archive_sampling_policy": "random",
+    "generator_model": "MEDIUM",
+    "mutation_operator": "recombine",
+    "number_of_offspring": 2,
+    "parent_selection_policy": "uniform",
+    "reflection_depth": 1
+  },
+  {
+    "archive_sampling_policy": "best",
+    "generator_model": "STRONG",
+    "mutation_operator": "global",
+    "number_of_offspring": 3,
+    "parent_selection_policy": "elite",
+    "reflection_depth": 2
+  },
+  {
+    "archive_sampling_policy": "diverse",
+    "generator_model": "SMALL",
+    "mutation_operator": "simplify",
+    "number_of_offspring": 1,
+    "parent_selection_policy": "diverse",
+    "reflection_depth": 0
+  }
+]
